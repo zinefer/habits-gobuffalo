@@ -11,6 +11,7 @@ $(() => {
   Vue.use(VueRouter);
 
   const routes = [
+    {path: "/", component: HomeComponent}
   ];
 
   const router = new VueRouter({

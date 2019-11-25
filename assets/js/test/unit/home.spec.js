@@ -1,10 +1,12 @@
 import { shallowMount } from '@vue/test-utils'
-import HomeComponent from "../../components/home.vue";
+
+import HomePage from "../../pages/home.vue";
+import NavigationComponent from "../../components/navigation.vue";
 
 let wrapper = null
 
 beforeEach(() => {
-  wrapper = shallowMount(HomeComponent)
+  wrapper = shallowMount(HomePage)
 })
 
 afterEach(() => {
@@ -12,7 +14,7 @@ afterEach(() => {
 })
 
 describe('Home', () => {
-  it('renders Welcome', () => {
-    expect(wrapper.find('.page-header').text()).toContain('Welcome')
+  it('renders navigation', () => {
+    expect(wrapper.contains(NavigationComponent)).toBe(true)
   })
 })

@@ -5,7 +5,7 @@ import Vue from "vue";
 import VueRouter from "router";
 import BootstrapVue from "bootstrap-vue";
 
-import HomeComponent from "./components/home.vue";
+import HomePage from "./pages/home.vue";
 
 $(() => {
 
@@ -13,7 +13,7 @@ $(() => {
   Vue.use(BootstrapVue);
 
   const routes = [
-    {path: "/", component: HomeComponent}
+    {path: "/", component: HomePage}
   ];
 
   const router = new VueRouter({

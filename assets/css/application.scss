@@ -1,2 +1,8 @@
-@import "custom";
 @import "~@fortawesome/fontawesome-free/css/all.min.css";
+
+@import "~bulma/sass/utilities/_all";
+
+@import "custom";
+
+@import "~bulma";
+@import "~buefy/src/scss/buefy";

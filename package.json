@@ -11,6 +11,7 @@
   "repository": "github.com/gobuffalo/buffalo",
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.8.1",
+    "buefy": "^0.8.8",
     "jquery": "~3.4.1",
     "jquery-ujs": "~1.2.2",
     "popper.js": "^1.14.4",

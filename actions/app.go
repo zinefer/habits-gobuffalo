@@ -2,17 +2,17 @@ package actions
 
 import (
 	"github.com/gobuffalo/buffalo"
+	"github.com/gobuffalo/buffalo-pop/pop/popmw"
 	"github.com/gobuffalo/envy"
+	csrf "github.com/gobuffalo/mw-csrf"
 	forcessl "github.com/gobuffalo/mw-forcessl"
+	i18n "github.com/gobuffalo/mw-i18n"
 	paramlogger "github.com/gobuffalo/mw-paramlogger"
+	"github.com/gobuffalo/packr/v2"
+	"github.com/markbates/goth/gothic"
 	"github.com/unrolled/secure"
 
 	"habits/models"
-
-	"github.com/gobuffalo/buffalo-pop/pop/popmw"
-	csrf "github.com/gobuffalo/mw-csrf"
-	i18n "github.com/gobuffalo/mw-i18n"
-	"github.com/gobuffalo/packr/v2"
 )
 
 // ENV is used to help switch settings based on where the
@@ -59,8 +59,20 @@ func App() *buffalo.App {
 		// Setup and use translations:
 		app.Use(translations())
 
-		app.GET("/", HomeHandler)
+		// Authentication
+		bah := buffalo.WrapHandlerFunc(gothic.BeginAuthHandler)
+		app.Use(SetCurrentUser)
+		app.Use(Authorize)
 
+		auth := app.Group("/auth")
+		auth.DELETE("", AuthDestroy)
+		auth.GET("/{provider}", bah)
+		auth.GET("/{provider}/callback", AuthCallback)
+		auth.Middleware.Skip(Authorize, bah, AuthCallback)
+
+		app.GET("/", HomeHandler)
+		app.Middleware.Skip(Authorize, HomeHandler)
+		
 		app.ServeFiles("/", assetsBox) // serve files from the public directory
 	}
 

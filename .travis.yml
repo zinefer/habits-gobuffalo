@@ -20,10 +20,14 @@ before_script:
   - wget https://github.com/gobuffalo/buffalo/releases/download/v0.15.1/buffalo_0.15.1_linux_amd64.tar.gz
   - tar -xvzf buffalo_0.15.1_linux_amd64.tar.gz
   - sudo mv buffalo /usr/local/bin/buffalo
+  - go get github.com/mattn/goveralls
 
 script:
   - go vet ./...
-  - buffalo test
+  - buffalo test -covermode=count -coverprofile=c.out
   - yarn install --no-progress
   - yarn test
   - buffalo build --static
+  - $GOPATH/bin/goveralls -coverprofile=c.out -service=travis-ci
+
+  

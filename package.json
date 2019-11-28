@@ -58,6 +58,6 @@
     },
     "collectCoverage": true,
     "coverageReporters": [ "lcov", "text-summary" ],
-    "collectCoverageFrom": [ "assets/**/*.{js,vue}" ]
+    "collectCoverageFrom": [ "assets/**/*.{js,vue}", "!assets/js/application.js" ]
   }
 }

@@ -32,6 +32,4 @@ script:
   
 after_script:
   - $GOPATH/bin/goveralls -coverprofile=c.out -service=travis-ci
-  - cat ./coverage/lcov.info | coveralls
-
-  
+  - cat ./coverage/lcov.info | yarn run coveralls

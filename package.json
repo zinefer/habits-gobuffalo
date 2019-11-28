@@ -30,6 +30,7 @@
     "babel-jest": "^24.9.0",
     "babel-loader": "^8.0.5",
     "copy-webpack-plugin": "~4.5.2",
+    "coveralls": "^3.0.9",
     "css-loader": "~1.0.0",
     "expose-loader": "~0.7.5",
     "file-loader": "~2.0.0",
@@ -50,14 +51,13 @@
     "webpack-manifest-plugin": "~2.0.0"
   },
   "jest": {
-    "moduleFileExtensions": [
-      "js",
-      "json",
-      "vue"
-    ],
+    "moduleFileExtensions": [ "js", "json", "vue" ],
     "transform": {
       "^.+\\.js$": "babel-jest",
       "^.+\\.vue$": "vue-jest"
-    }
+    },
+    "collectCoverage": true,
+    "coverageReporters": [ "lcov", "text-summary" ],
+    "collectCoverageFrom": [ "assets/**/*.{js,vue}" ]
   }
 }

@@ -15,19 +15,23 @@ env: GO111MODULE=on
 git:
   depth: 1
 
-# Install buffalo
 before_script:
+  # Install buffalo
   - wget https://github.com/gobuffalo/buffalo/releases/download/v0.15.1/buffalo_0.15.1_linux_amd64.tar.gz
   - tar -xvzf buffalo_0.15.1_linux_amd64.tar.gz
   - sudo mv buffalo /usr/local/bin/buffalo
+  # Install goveralls to push code coverage to coverage.io
   - go get github.com/mattn/goveralls
 
 script:
   - go vet ./...
-  - buffalo test -covermode=count -coverprofile=c.out
+  - buffalo test -covermode=count -coverprofile=c.out ./...
   - yarn install --no-progress
   - yarn test
   - buffalo build --static
+  
+after_script:
   - $GOPATH/bin/goveralls -coverprofile=c.out -service=travis-ci
+  - cat ./coverage/lcov.info | coveralls
 
   

@@ -1,19 +1,24 @@
 package models
 
 import (
-	"encoding/json"
 	"time"
 
+	"encoding/json"
+	
 	"github.com/gobuffalo/nulls"
 	"github.com/gobuffalo/pop"
 	"github.com/gobuffalo/validate"
 	"github.com/gobuffalo/validate/validators"
 	"github.com/gofrs/uuid"
+
+	_validators "habits/validators"
 )
 
+// User model for our users
 type User struct {
 	ID         uuid.UUID    `json:"id" db:"id"`
 	Name       string       `json:"name" db:"name"`
+	Nickname   string       `json:"nickname" db:"nickname"`
 	Email      nulls.String `json:"email" db:"email"`
 	Provider   string       `json:"provider" db:"provider"`
 	ProviderID string       `json:"provider_id" db:"provider_id"`
@@ -40,6 +45,7 @@ func (u Users) String() string {
 // This method is not required and may be deleted.
 func (u *User) Validate(tx *pop.Connection) (*validate.Errors, error) {
 	return validate.Validate(
+		&validators.StringIsPresent{Field: u.Nickname, Name: "Nickname"},
 		&validators.StringIsPresent{Field: u.Name, Name: "Name"},
 		&validators.StringIsPresent{Field: u.Provider, Name: "Provider"},
 		&validators.StringIsPresent{Field: u.ProviderID, Name: "ProviderID"},

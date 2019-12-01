@@ -1,10 +1,12 @@
 create_table("users") {
 	t.Column("id", "uuid", {primary: true})
 	t.Column("name", "string", {})
-	t.Column("email", "string", {null: true})
+	t.Column("nickname", "text", {})
+	t.Column("email", "string", {null: true, "size":320})
 	t.Column("provider", "string", {})
 	t.Column("provider_id", "string", {})
 	t.Timestamps()
 }
 
+add_index("users", "nickname", {"unique":true})
 add_index("users", ["provider", "provider_id"], {"unique":true})

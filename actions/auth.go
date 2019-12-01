@@ -16,6 +16,8 @@ import (
 	"github.com/markbates/goth/providers/google"
 	"github.com/pkg/errors"
 
+	petname "github.com/dustinkirkland/golang-petname"
+
 	"habits/models"
 )
 
@@ -29,6 +31,7 @@ func init() {
 	)
 }
 
+// AuthCallback is the return oAuth call
 func AuthCallback(c buffalo.Context) error {
 	gu, err := gothic.CompleteUserAuth(c.Response(), c.Request())
 	if err != nil {
@@ -46,29 +49,52 @@ func AuthCallback(c buffalo.Context) error {
 			return errors.WithStack(err)
 		}
 	}
+
+	u.Nickname = gu.NickName
 	u.Name = defaults.String(gu.Name, gu.NickName)
 	u.Provider = gu.Provider
 	u.ProviderID = gu.UserID
 	u.Email = nulls.NewString(gu.Email)
-	if err = tx.Save(u); err != nil {
+
+	if err = preventNicknameCollisions(tx, u, 0); err != nil {
 		return errors.WithStack(err)
 	}
 
+	if err = tx.Save(u); err != nil {
+		return errors.WithStack(err)
+	}
 	c.Session().Set("current_user_id", u.ID)
 	if err = c.Session().Save(); err != nil {
 		return errors.WithStack(err)
 	}
-
 	c.Flash().Add("success", "You have been logged in")
 	return c.Redirect(302, "/")
 }
 
+func preventNicknameCollisions(tx *pop.Connection, u *models.User, tries int) error {
+	unique := u.HasUniqueNickname(tx)
+	if !unique || u.Nickname == "" {
+		u.Nickname = petname.Generate(min(tries/5, 2), "-")
+		return preventNicknameCollisions(tx, u, tries+1)
+	}
+	return nil
+}
+
+func min(x, y int) int {
+    if x < y {
+        return x
+    }
+    return y
+}
+
+// AuthDestroy kills sessions
 func AuthDestroy(c buffalo.Context) error {
 	c.Session().Clear()
 	c.Flash().Add("success", "You have been logged out")
 	return c.Redirect(302, "/")
 }
 
+// SetCurrentUser for context/cookies/sessions
 func SetCurrentUser(next buffalo.Handler) buffalo.Handler {
 	return func(c buffalo.Context) error {
 		if uid := c.Session().Get("current_user_id"); uid != nil {
@@ -77,13 +103,15 @@ func SetCurrentUser(next buffalo.Handler) buffalo.Handler {
 			if err := tx.Find(u, uid); err != nil {
 				return errors.WithStack(err)
 			}
+
 			c.Set("current_user", u)
+			c.Cookies().Set("current_user", u.Name, 30*24*time.Hour)
 		}
-		c.Cookies().Set("current_user", "current", 30*24*time.Hour)
 		return next(c)
 	}
 }
 
+// Authorize ensures the user is signed in
 func Authorize(next buffalo.Handler) buffalo.Handler {
 	return func(c buffalo.Context) error {
 		if uid := c.Session().Get("current_user_id"); uid == nil {

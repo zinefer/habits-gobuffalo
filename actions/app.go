@@ -1,6 +1,9 @@
 package actions
 
 import (
+	"time"
+	"math/rand"
+
 	"github.com/gobuffalo/buffalo"
 	"github.com/gobuffalo/buffalo-pop/pop/popmw"
 	"github.com/gobuffalo/envy"
@@ -19,6 +22,7 @@ import (
 // application is being run. Default is "development".
 var ENV = envy.Get("GO_ENV", "development")
 var app *buffalo.App
+// T ranslator?
 var T *i18n.Translator
 
 // App is where all routes and middleware for buffalo
@@ -40,6 +44,8 @@ func App() *buffalo.App {
 			Env:         ENV,
 			SessionName: "_habits_session",
 		})
+
+		rand.Seed(time.Now().UnixNano())
 
 		// Automatically redirect to SSL
 		app.Use(forceSSL())

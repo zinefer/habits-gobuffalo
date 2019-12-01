@@ -1,7 +1,7 @@
 package models
 
-import "testing"
+//import "testing"
 
-func Test_User(t *testing.T) {
+func (ms *ModelSuite) Test_User() {
 	//t.Fatal("This test needs to be implemented!")
 }

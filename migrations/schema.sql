@@ -52,7 +52,8 @@ ALTER TABLE public.schema_migration OWNER TO postgres;
 CREATE TABLE public.users (
     id uuid NOT NULL,
     name character varying(255) NOT NULL,
-    email character varying(255),
+    nickname text NOT NULL,
+    email character varying(320),
     provider character varying(255) NOT NULL,
     provider_id character varying(255) NOT NULL,
     created_at timestamp without time zone NOT NULL,
@@ -75,6 +76,13 @@ ALTER TABLE ONLY public.users
 --
 
 CREATE UNIQUE INDEX schema_migration_version_idx ON public.schema_migration USING btree (version);
+
+
+--
+-- Name: users_nickname_idx; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE UNIQUE INDEX users_nickname_idx ON public.users USING btree (nickname);
 
 
 --

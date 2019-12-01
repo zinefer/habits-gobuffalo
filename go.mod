@@ -5,6 +5,7 @@ go 1.12
 require (
 	cloud.google.com/go v0.36.0 // indirect
 	github.com/cockroachdb/cockroach-go v0.0.0-20190925194419-606b3d062051 // indirect
+	github.com/dustinkirkland/golang-petname v0.0.0-20191129215211-8e5a1ed0cff0
 	github.com/gobuffalo/buffalo v0.15.0
 	github.com/gobuffalo/buffalo-goth v1.0.4-0.20190907155424-d4c290561026 // indirect
 	github.com/gobuffalo/buffalo-plugins v1.14.1 // indirect
@@ -29,5 +30,6 @@ require (
 	github.com/markbates/grift v1.1.0
 	github.com/pkg/errors v0.8.1
 	github.com/spf13/afero v1.2.1 // indirect
+	github.com/stretchr/testify v1.4.0
 	github.com/unrolled/secure v1.0.5
 )

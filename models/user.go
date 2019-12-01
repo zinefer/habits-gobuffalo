@@ -41,10 +41,17 @@ func (u Users) String() string {
 	return string(ju)
 }
 
+// HasUniqueNickname returns true if this users nickname is unique
+func (u *User) HasUniqueNickname(tx *pop.Connection) bool {
+	validator := getNicknameValidator("users", "Nickname", u.Nickname, u.ID, tx)
+	exists := validate.Validate(validator).HasAny()
+	return !exists
+}
+
 // Validate gets run every time you call a "pop.Validate*" (pop.ValidateAndSave, pop.ValidateAndCreate, pop.ValidateAndUpdate) method.
-// This method is not required and may be deleted.
 func (u *User) Validate(tx *pop.Connection) (*validate.Errors, error) {
 	return validate.Validate(
+		getNicknameValidator("users", "Nickname", u.Nickname, u.ID, tx),
 		&validators.StringIsPresent{Field: u.Nickname, Name: "Nickname"},
 		&validators.StringIsPresent{Field: u.Name, Name: "Name"},
 		&validators.StringIsPresent{Field: u.Provider, Name: "Provider"},
@@ -53,13 +60,15 @@ func (u *User) Validate(tx *pop.Connection) (*validate.Errors, error) {
 }
 
 // ValidateCreate gets run every time you call "pop.ValidateAndCreate" method.
-// This method is not required and may be deleted.
 func (u *User) ValidateCreate(tx *pop.Connection) (*validate.Errors, error) {
 	return validate.NewErrors(), nil
 }
 
 // ValidateUpdate gets run every time you call "pop.ValidateAndUpdate" method.
-// This method is not required and may be deleted.
 func (u *User) ValidateUpdate(tx *pop.Connection) (*validate.Errors, error) {
 	return validate.NewErrors(), nil
+}
+
+func getNicknameValidator(table string, field string, value string, id uuid.UUID, tx *pop.Connection) validate.Validator {
+	return &_validators.FieldIsUnique{Table: table, Field: field, Value: value, ID: id, TX: tx}
 }
